@@ -38,4 +38,4 @@ LR_PARAMS = {
     "class_weight": "balanced",
 }
 
-HUMAN_REVIEW_THRESHOLD = 0.60
+HUMAN_REVIEW_THRESHOLD = 0.50
