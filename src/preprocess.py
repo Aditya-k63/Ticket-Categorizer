@@ -25,6 +25,10 @@ def clean_text(text: str) -> str:
 
 def load_raw_data(path=RAW_DATA_PATH) -> pd.DataFrame:
     df = pd.read_csv(path)
+
+    if "text" in df.columns and "category" in df.columns:
+        return df[["text", "category"]]
+
     df["text"] = df["subject"].fillna("") + " " + df["body"].fillna("")
     df["category"] = df["queue"].map(CATEGORY_MAP)
     df = df[df["category"].notna()].copy()
