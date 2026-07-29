@@ -22,18 +22,20 @@ def load_models():
 
 st.set_page_config(page_title="Ticket Categorizer", page_icon="🎫", layout="centered")
 st.title("🎫 Ticket Categorizer")
-st.caption("Type a support ticket below — it classifies automatically.")
+st.caption("Press **Enter** to classify · **Shift+Enter** for new line")
 
 model, vectorizer = load_models()
 
-ticket = st.text_area(
-    "Ticket text",
-    placeholder="e.g. I was charged twice for my subscription this month.",
-    height=100,
-    label_visibility="collapsed",
-)
+with st.form("ticket_form"):
+    ticket = st.text_area(
+        "Ticket text",
+        placeholder="e.g. I was charged twice for my subscription this month.",
+        height=100,
+        label_visibility="collapsed",
+    )
+    submitted = st.form_submit_button("Classify", use_container_width=True, type="primary")
 
-if ticket.strip():
+if submitted and ticket.strip():
     result = predict_ticket(ticket.strip(), model, vectorizer)
 
     if result["needs_review"]:
@@ -50,5 +52,30 @@ if ticket.strip():
             f"<div style='{highlight}'><div style='font-size:12px'>{cat}</div><div style='font-size:22px;font-weight:700'>{prob:.0f}%</div></div>",
             unsafe_allow_html=True,
         )
-else:
-    st.info("Enter a ticket above to see the prediction.")
+elif not submitted:
+    st.info("Type a ticket above and press Enter to classify.")
+
+st.markdown(
+    """
+<script>
+(function() {
+    const handler = setInterval(() => {
+        const ta = document.querySelector('textarea');
+        if (!ta) return;
+        clearInterval(handler);
+        ta.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const form = ta.closest('form');
+                if (form) {
+                    const btn = form.querySelector('button[type="submit"]');
+                    if (btn) btn.click();
+                }
+            }
+        });
+    }, 100);
+})();
+</script>
+""",
+    unsafe_allow_html=True,
+)
