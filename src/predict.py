@@ -13,10 +13,12 @@ PRIORITY_KEYWORDS = {
 
 
 CONFIDENCE_MARGIN = 0.15
+MIN_WORDS = 4
 
 
 def predict_ticket(text: str, model, vectorizer) -> dict:
     clean = clean_text(text)
+    words = clean.split()
     vec = vectorizer.transform([clean])
     probs = model.predict_proba(vec)[0]
     pred_idx = int(np.argmax(probs))
@@ -39,12 +41,14 @@ def predict_ticket(text: str, model, vectorizer) -> dict:
                 priority = "low"
                 break
 
-    needs_review = confidence < HUMAN_REVIEW_THRESHOLD or margin < CONFIDENCE_MARGIN
+    too_short = len(words) < MIN_WORDS
+    needs_review = too_short or confidence < HUMAN_REVIEW_THRESHOLD or margin < CONFIDENCE_MARGIN
 
     return {
         "category": category,
         "confidence": round(confidence * 100, 1),
         "margin": round(margin * 100, 1),
+        "too_short": too_short,
         "priority": priority,
         "needs_review": needs_review,
         "all_probs": {c: round(float(p) * 100, 1)
