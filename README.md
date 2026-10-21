@@ -2,7 +2,7 @@
 
 Classify support tickets into **Billing**, **Technical**, **HR**, or **General** using NLP and Logistic Regression. Built for the AI/ML Intern Assessment at **Fobes Skill Itech**.
 
-👉 **Live demo**: run locally with \streamlit run app.py\ (or deploy from this repo to Streamlit Cloud)
+👉 **Live demo**: run locally with `streamlit run app.py` (or deploy from this repo to Streamlit Cloud)
 
 ---
 
